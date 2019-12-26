@@ -13,8 +13,6 @@ const initialState = {
         //     id: 0,
         //     location: {x: 9, y: 19},
         //     supportUnits: [],
-        //     isHeadquarterAlarmOn: false,
-        //     isPolicemanAlarmOn: true,
         //     activationTime: 1
         // },
     ],
@@ -36,8 +34,6 @@ export default function (state = initialState, action) {
                 id: action.id,
                 location: action.location,
                 supportUnits: [],
-                isHeadquarterAlarmOn: false,
-                isPolicemanAlarmOn: true,
                 activationTime: action.activationTime
             };
             allIncidentsCopy.push(newIncident);
@@ -123,8 +119,7 @@ const copyIncident = incident => ( incident && {
     id: incident.id,
     location: {...incident.location},
     supportUnits: [...incident.supportUnits],
-    isHeadquarterAlarmOn: incident.isHeadquarterAlarmOn,
-    isPolicemanAlarmOn: incident.isPolicemanAlarmOn
+    activationTime: incident.activationTime,
 });
 
 export const copyAllIncidents = incidents => incidents.map(item => copyIncident(item));

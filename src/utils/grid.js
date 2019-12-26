@@ -27,44 +27,92 @@ class Grid {
         return cells
     }
 
+    findClosestRoad(target) {
+
+        for (let i = 1; i <= this.buildingSize; i++) {
+            if (!this.isObstacle(target.x, target.y + i)) {
+                return ({x: target.x, y: target.y + i});
+            }
+            if (!this.isObstacle(target.x + i, target.y)) {
+                return ({x: target.x + i, y: target.y});
+            }
+            if (!this.isObstacle(target.x, target.y - i)) {
+                return ({x: target.x, y: target.y - i});
+            }
+            if (!this.isObstacle(target.x - i, target.y)) {
+                return ({x: target.x - i, y: target.y});
+            }
+        }
+        return target
+
+    }
+
+    mapTarget(target) {
+        if (this.isObstacle(target.x, target.y)) {
+            return this.findClosestRoad(target);
+        } else {
+            return target;
+        }
+    }
+
+
     findPath(start, stop) {
-        let current = {...start};
+        let current = start;
+        const target = this.mapTarget(stop);
         let isNextStepPossible = true;
 
         const path = [];
-        let lastMinDistance = 1000;
+        const visited = [current];
+        let lastMinDistance = 100000;
+        const guard = 100;
+        let it = 0;
 
-        while (current !== stop && isNextStepPossible) {
+        while (current !== target && isNextStepPossible && it < guard) {
 
-            const neighbours = this.nonObstacleNeighbours(current.x, current.y);
+            const neighbours = this.findNeighbours(current.x, current.y, visited);
+
+            for (const n of neighbours) {
+                visited.push(n)
+            }
 
             if (neighbours.length === 0) {
                 isNextStepPossible = false
             } else {
 
-                let minDistance = 1000;
+                let minDistance = 100000;
 
                 for (const neighbour of neighbours) {
-                    const distanceToGoal = this.estimatedDistanceToGoal(neighbour, stop);
+                    const distanceToGoal = this.estimatedDistanceToGoal(neighbour, target);
 
                     if (distanceToGoal === 0) {
                         isNextStepPossible = false
                     }
                     if (distanceToGoal < minDistance) {
-                        current = {...neighbour};
+                        current = neighbour;
                         minDistance = distanceToGoal
                     }
                 }
 
-                if (minDistance >= lastMinDistance) {
-                    isNextStepPossible = false
-                } else {
-                    lastMinDistance = minDistance;
-                    path.push(current)
-                }
+                lastMinDistance = minDistance;
+                path.push(current);
+
+                it++;
             }
         }
         return path;
+    }
+
+    findNeighbours(x, y, visited) {
+        const n1 = this.nonObstacleNeighbours(x, y);
+        const n2 = n1.filter(n => {
+            for (const v of visited) {
+                if (v.x === n.x && v.y === n.y) {
+                    return false
+                }
+            }
+            return true
+        });
+        return n2;
     }
 
     estimatedDistanceToGoal(current, stop) {

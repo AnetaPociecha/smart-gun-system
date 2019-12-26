@@ -17,7 +17,7 @@ function ControlPanel({clear, logs, height}) {
                             <div style={{lineHeight: '100%'}}>
                                 <small>{log}</small> <br/>
                             </div>
-                            <div style={{lineHeight: '50%'}}>
+                            <div style={{lineHeight: '30%'}}>
                                 <br/>
                             </div>
                         </React.Fragment>

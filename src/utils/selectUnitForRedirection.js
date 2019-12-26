@@ -42,10 +42,14 @@ export default function (location) {
         // 2
         support = support.filter(unit => unit.status !== Status.ON_THE_SPOT);
 
+
+        // find
         if (support.length === 0) return undefined;
 
         let minNavLength = grid.findPath(support[0].position, location);
         let closesUnit = support[0];
+
+
 
         for (const unit of support) {
             if (unit.navigation.length < minNavLength) {
